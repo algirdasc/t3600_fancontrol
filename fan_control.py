@@ -12,7 +12,7 @@ config.read(CONFIG_PATH)
 
 CPU_TEMP_INPUT = "/sys/class/hwmon/hwmon0/temp1_input"
 
-PWM_CMD="screen -dmS pwm {0}".format(os.path.join(APP_PATH, "pwm.py"))
+PWM_CMD="screen -dmS pwm flock -w 1 /tmp/fan_pwm.lck {0}".format(os.path.join(APP_PATH, "pwm.py"))
 
 FAN1 = "/sys/class/hwmon/hwmon0/pwm1"
 FAN2 = "/sys/class/hwmon/hwmon0/pwm2"
@@ -80,8 +80,8 @@ with open(CONFIG_PATH, 'w') as f:
 
 PWM_FOUND = False
 for process in psutil.process_iter():
-    cmdline = process.cmdline()
-    if " ".join(cmdline).lower() == PWM_CMD:
+    cmdline = " ".join(process.cmdline())
+    if cmdline.lower() == PWM_CMD.lower():
         PWM_FOUND = True
         break
 
